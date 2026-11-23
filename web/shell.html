@@ -82,7 +82,8 @@
   #exit-fullscreen:hover { opacity: 0.9; }
   body.fullscreen { background: #000; }
   body.fullscreen #bar { display: none; }
-  body.fullscreen #exit-fullscreen { display: block; }
+  /* only touch devices need it: a keyboard leaves fullscreen with Esc or F, a mouse with a double click */
+  body.fullscreen.touch #exit-fullscreen { display: block; }
   @media (orientation: landscape) {
     body.touch #stage { flex: 1; aspect-ratio: auto; max-height: none; }
     body.touch .controls { position: fixed; inset: 0; display: block; padding: 0; pointer-events: none; z-index: 1;
