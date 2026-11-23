@@ -230,7 +230,7 @@ void execute(int unit, std::uint32_t cmd, const std::uint32_t *data) {
     case 0x04: u.itops = imm & 0x3FFu; break;
     case 0x05: u.mode = imm & 3u; break;
     case 0x06: gif::set_path3_masked((imm >> 15) & 1u); break;
-    case 0x07: u.mark = imm; break;
+    case 0x07: u.mark = imm; u.stat |= 0x40u; break; // MARK sets STAT.MRK
     case 0x10: case 0x11: case 0x13: break;
     case 0x14: case 0x15: run_vu(unit, imm * 8u); break;
     case 0x17: run_vu(unit, shadow(unit) ? 0u : vu::tpc(unit)); break;
@@ -379,7 +379,7 @@ void write(int unit, std::uint32_t reg, std::uint32_t value) {
         }
         break;
     case 0x20: u.err = value; break;
-    case 0x30: u.mark = value; break;
+    case 0x30: u.mark = value; u.stat &= ~0x40u; break; // a CPU write clears STAT.MRK
     default:
         if (reg >= 0x100 && reg < 0x140) u.row[(reg - 0x100) >> 4] = value;
         else if (reg >= 0x140 && reg < 0x180) u.col[(reg - 0x140) >> 4] = value;
