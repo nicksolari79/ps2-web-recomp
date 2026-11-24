@@ -11,6 +11,7 @@
 #include "ps2/state.hpp"
 
 #include <algorithm>
+#include <set>
 #include <cstdio>
 #include <cstring>
 #include <deque>
@@ -260,7 +261,10 @@ void command(std::uint32_t src, std::uint32_t size) {
     default: {
         auto it = g_cmd_handlers.find(h->cid);
         if (it == g_cmd_handlers.end()) {
-            std::fprintf(stderr, "[sif] command 0x%08X has no handler (from ee buffer 0x%08X)\n", h->cid, src);
+            // dropped, as sifcmd does; some games send one every frame, so say it once
+            static std::set<std::uint32_t> reported;
+            if (reported.insert(h->cid).second)
+                std::fprintf(stderr, "[sif] command 0x%08X has no handler (from ee buffer 0x%08X), dropping it\n", h->cid, src);
             break;
         }
         std::memcpy(iop::ram_ptr(kCmdBuffer), packet, std::min<std::uint32_t>(size, 0x400u));
